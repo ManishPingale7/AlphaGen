@@ -19,6 +19,29 @@ class UserProfileRequest(BaseModel):
     user_profile: str
 
 
+class SkillRatings(BaseModel):
+    creative: str
+    technical: str
+    strategic: str
+    content: str
+    Editing: str
+
+
+@router.post("/skill-ratings")
+async def submit_skill_ratings(ratings: SkillRatings):
+    """
+    Accepts skill ratings and prints them.
+    """
+    print("Received skill ratings:")
+    print(f"Creative: {ratings.creative}")
+    print(f"Technical: {ratings.technical}")
+    print(f"Strategic: {ratings.strategic}")
+    print(f"Content: {ratings.content}")
+    print(f"Editing: {ratings.Editing}")
+    
+    return {"message": "Ratings received successfully", "ratings": ratings.dict()}
+
+
 @router.post("/course-recommendation")
 async def course_recommendation_endpoint(request: UserProfileRequest):
     """

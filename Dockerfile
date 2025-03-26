@@ -2,8 +2,13 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Create a writable temporary directory
+RUN mkdir -p /writable-tmp && chmod 777 /writable-tmp
+ENV TMPDIR=/writable-tmp
+
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r requirements.txt
 
 COPY . .
 
