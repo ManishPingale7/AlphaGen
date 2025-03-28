@@ -6,7 +6,7 @@ class UserProfileRequest(BaseModel):
 
 class SkillRatings(BaseModel):
     creative: str
-    technical: str
-    strategic: str
-    content: str
-    Editing: str
+    engagement: str
+    technical_proficiency: str
+    strategic_thinking: str
+    clarity: str

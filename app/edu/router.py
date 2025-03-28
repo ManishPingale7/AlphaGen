@@ -1,29 +1,28 @@
-from fastapi import APIRouter, HTTPException
-from edu.course_recommender import UserProfiledCourseRecommender
+from fastapi import APIRouter,HTTPException
+from app.edu.course_recommender import UserProfiledCourseRecommender
 from groq import Groq
-from typing import Union
 from dotenv import load_dotenv
 import os
-from .schemas import SkillRatings,UserProfileRequest
-from .crud import add_skill_ratings, retrieve_latest_skill_ratings
 import json
+from .schemas import UserProfileRequest,SkillRatings
+from pydantic import BaseModel
+from .crud import add_skill_ratings,retrieve_latest_skill_ratings
 import re
 
 load_dotenv()
 
-router = APIRouter(prefix="/edu", tags=["Education"])
+router = APIRouter(prefix="/edu", tags=["Education task APIs"])
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 recommender = UserProfiledCourseRecommender('data/courses.csv')
- 
 
-@router.get("/skill_ratings/")
+
+@router.get("/skill_ratings")
 async def get_skill_ratings():
     skill_ratings = await retrieve_latest_skill_ratings()
     if skill_ratings:
         return skill_ratings
     raise HTTPException(status_code=404, detail="SkillRatings not found")
-
 
 
 @router.post("/skill-ratings")
@@ -32,7 +31,6 @@ async def submit_skill_ratings(ratings: SkillRatings):
     return new_skill_ratings
 
 
- 
 @router.post("/course-recommendation")
 async def course_recommendation_endpoint(request: UserProfileRequest):
     try:
@@ -41,7 +39,6 @@ async def course_recommendation_endpoint(request: UserProfileRequest):
         return json.loads(recommendations)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/mcq-test")
 async def generate_mcq_test():
@@ -91,7 +88,7 @@ async def generate_mcq_test():
     except json.JSONDecodeError as e:
         return {"error": f"JSON parsing error: {str(e)}\n{response_text}"}
 
-    return {"response": extracted_json}
+    return {"response":extracted_json}
 
 
 def clean_json(json_str: str) -> str:
